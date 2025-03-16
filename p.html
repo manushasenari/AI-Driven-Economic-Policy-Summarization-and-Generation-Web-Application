@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Policy AI Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1E1E2F; /* Dark theme background */
+            color: #FFFFFF;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #FFD700; /* Gold color for title */
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #2A2A3C;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        input, textarea {
+            background-color: #3A3A4F;
+            color: #FFF;
+        }
+
+        button {
+            background-color: #FFD700;
+            color: #1E1E2F;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #FFC107;
+        }
+
+        .result {
+            background-color: #33334D;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        async function summarizePolicy() {
+            const fileInput = document.getElementById('pdfFile');
+            const textInput = document.getElementById('textInput').value;
+
+            const formData = new FormData();
+            if (fileInput.files.length) {
+                formData.append('file', fileInput.files[0]);
+            } else if (textInput) {
+                formData.append('text', textInput);
+            } else {
+                alert("Please upload a PDF file or enter text to summarize.");
+                return;
+            }
+
+            const response = await fetch('http://127.0.0.1:5000/summarize', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            document.getElementById('summaryResult').innerText = result.summary || "Error summarizing the document";
+        }
+
+        async function generatePolicy() {
+            const policyType = document.getElementById('policyType').value;
+            const scenario = document.getElementById('scenario').value;
+            
+            if (!policyType || !scenario) {
+                alert("Please enter policy type and scenario");
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('policy_type', policyType);
+            formData.append('scenario', scenario);
+            
+            const response = await fetch('http://127.0.0.1:5000/generate-policy', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            document.getElementById('generatedPolicyResult').innerText = result.generated_policy || "Error generating policy";
+        }
+    </script>
+</head>
+<body>
+    <h1>Policy AI Assistant</h1>
+    <div class="container">
+        <h2>Summarize a Policy Document</h2>
+        <input type="file" id="pdfFile" accept="application/pdf">
+        <textarea id="textInput" placeholder="Or enter text to summarize..."></textarea>
+        <button onclick="summarizePolicy()">Summarize</button>
+        <p class="result" id="summaryResult"></p>
+    </div>
+    
+    <div class="container" style="margin-top: 20px;">
+        <h2>Generate an Economic Policy</h2>
+        <input type="text" id="policyType" placeholder="Enter policy type">
+        <input type="text" id="scenario" placeholder="Enter scenario">
+        <button onclick="generatePolicy()">Generate Policy</button>
+        <p class="result" id="generatedPolicyResult"></p>
+    </div>
+</body>
+</html>
