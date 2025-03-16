@@ -1,0 +1,2 @@
+# AI-Driven-Economic-Policy-Summarization-and-Generation-Web-Application
+Developed a web application using NLP to summarize economic policy documents and generative AI to create customized policies. Built with Visual Studio and HTML, the app allows users to upload documents for summarization and input scenarios for policy generation. A YouTube Shorts video was created to showcase the project’s functionality. 🚀
